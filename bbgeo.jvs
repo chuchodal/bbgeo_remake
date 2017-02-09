@@ -1,0 +1,64 @@
+
+import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+boolean[][] briques = new boolean[8][6];
+
+void main(){
+	//Création de la fenêtre
+	JFrame fenetre = new JFrame();
+	fenetre.setTitle("BB GEO");
+	fenetre.setSize(400, 800);
+	fenetre.setLocationRelativeTo(null);
+	//fenetre.setUndecorated(true);
+	fenetre.setVisible(true);
+
+	JPanel panel = new JPanel();
+	panel.setBackground(Color.BLACK);
+
+	fenetre.setContentPane(panel);
+
+
+	//Création et remplissage initial du tableau contenant les briques
+	for(int i = 0; i < briques.length; i++){
+		for(int j = 0; j < briques[0].length; j++){
+			briques[i][j] = false;
+		}
+	}
+	finDeTour();
+	for(int i = 0; i < briques.length; i++){
+		for(int j = 0; j < briques[0].length; j++){
+			print(briques[i][j]);
+			print(" ");
+		}
+		println();
+	}
+}
+
+void finDeTour(){
+	//On abaisse toutes les briques d'une ligne, et on genere la ligne du dessus
+	//Si la ligne du bas n,'est pas vide avant dêtre abaissée, game over
+	boolean perdu = false;
+	for(int i = briques.length-1; i >= 0; i++){
+		for(int j = 0; j < briques[0].length; j++){
+			if(i == briques.length-1 && briques[i][j]){
+				perdu = true;
+				break;
+			}
+			if(i != 0){
+				//On copie les briques de la ligne au dessus si ce n'est pas la ligne tout au dessus
+				briques[i][j] = briques[i-1][j];
+			}
+			else {
+				//sinon , on genere une ligne.
+				briques[i][j] = briqueAuHasard();
+			}
+		}
+	}
+}
+
+boolean briqueAuHasard(){
+	//Retourne true ou false (une chance sur 2?)
+	return true;
+}
