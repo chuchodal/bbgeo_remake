@@ -1,24 +1,28 @@
 
 import java.awt.Color;
+import java.awt.Graphics;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-boolean[][] briques = new boolean[8][6];
+boolean[][] briques = new boolean[9][7];
 
 void main(){
 	//Création de la fenêtre
-	JFrame fenetre = new JFrame();
-	fenetre.setTitle("BB GEO");
-	fenetre.setSize(400, 800);
-	fenetre.setLocationRelativeTo(null);
+	//JFrame fenetre = new JFrame();
+	//fenetre.setTitle("BB GEO");
+	//fenetre.setSize(400, 800);
+	//fenetre.setLocationRelativeTo(null);
 	//fenetre.setUndecorated(true);
-	fenetre.setVisible(true);
+	//fenetre.setVisible(true);
 
-	JPanel panel = new JPanel();
-	panel.setBackground(Color.BLACK);
+	//JPanel panel = new JPanel();
+	//panel.setBackground(Color.BLACK);
+	//Graphics g = panel.getGraphics();
+	//panel.drawComponent();
+	//g.drawRect(10,10,100,100);
+	//fenetre.setContentPane(panel);
 
-	fenetre.setContentPane(panel);
-
+	reset(3, 4);
 
 	//Création et remplissage initial du tableau contenant les briques
 	for(int i = 0; i < briques.length; i++){
@@ -27,38 +31,51 @@ void main(){
 		}
 	}
 	finDeTour();
-	for(int i = 0; i < briques.length; i++){
-		for(int j = 0; j < briques[0].length; j++){
-			print(briques[i][j]);
-			print(" ");
+
+
+	//Entrée dans la boucle principale
+	boolean continuer = true;
+	while(continuer){
+		for(int i = 0; i < briques.length; i++){
+			for(int j = 0; j < briques[0].length; j++){
+				//print(briques[i][j]);
+				//print(" ");
+				if(briques[i][j]) setPixel(3-j,4-i, "red");
+			}
+			//println();
+			sleep(100);
+			if(!finDeTour()){
+				continuer = false;
+			}
 		}
-		println();
 	}
+	
 }
 
-void finDeTour(){
+boolean finDeTour(){
 	//On abaisse toutes les briques d'une ligne, et on genere la ligne du dessus
 	//Si la ligne du bas n,'est pas vide avant dêtre abaissée, game over
 	boolean perdu = false;
-	for(int i = briques.length-1; i >= 0; i++){
+	for(int i = briques.length-1; i >= 0; i--){
 		for(int j = 0; j < briques[0].length; j++){
 			if(i == briques.length-1 && briques[i][j]){
-				perdu = true;
-				break;
+				return false;
 			}
-			if(i != 0){
-				//On copie les briques de la ligne au dessus si ce n'est pas la ligne tout au dessus
-				briques[i][j] = briques[i-1][j];
-			}
-			else {
+			if(i == 0){
 				//sinon , on genere une ligne.
 				briques[i][j] = briqueAuHasard();
 			}
+			else {
+				//On copie les briques de la ligne au dessus si ce n'est pas la ligne tout au dessus
+				briques[i][j] = briques[i-1][j];
+			}
 		}
 	}
+	return true;
 }
 
 boolean briqueAuHasard(){
 	//Retourne true ou false (une chance sur 2?)
-	return true;
+	return random() > 0.4;
 }
+;
