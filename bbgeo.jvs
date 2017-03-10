@@ -1,62 +1,85 @@
 
+import java.awt. *;
+import java.awt.event. *;
+import javax.swing. *;
+
+// on declare un tableaux de booleens pour representer les briques
 boolean[][] briques = new boolean[9][7];
 
-void main(){
+int[] coordonees_clic = new int[2];
+boolean clic = false;
 
-	reset(3, 4);
+void main() {
+   reset(3, 4, true);
+   //On crée un event listener pour detecter les clics du joueur
+   
 
-	//Création et remplissage initial du tableau contenant les briques
-	for(int i = 0; i < briques.length; i++){
-		for(int j = 0; j < briques[0].length; j++){
-			briques[i][j] = false;
-		}
-	}
-	finDeTour();
+	// Définition d'un runnable
+	setRunnable(new Runnable() { public void run() {
+		coordonees_clic[0]= getX(); 
+         coordonees_clic[1] = getY();
+	    clic = true;
+	}});
 
-	//Entrée dans la boucle principale
-	boolean continuer = true;
-	while(continuer){
-		for(int i = 0; i < briques.length; i++){
-			for(int j = 0; j < briques[0].length; j++){
-				if(briques[i][j]) setPixel(3-j,4-i, "red");
-				else{
-					setPixel(3-j,4-i, "white");
-				}
-			}
-		}
-		sleep(100);
-			if(!finDeTour()){
-				continuer = false;
-			}
-	}
-	
+
+   //Création et remplissage initial du tableau contenant les briques
+    for (int i = 0; i < briques.length; i ++) {
+      for (int j = 0; j < briques[0].length; j ++) {
+         briques[i][j] = false;
+      }
+   }
+   // on apelle la fonction finDeTour pour initialiser les briques
+   finDeTour();
+   
+   //Entrée dans la boucle principale
+    boolean continuer = true;
+   while (continuer) {
+      for (int i = 0; i < briques.length; i ++) {
+         for (int j = 0; j < briques[0].length; j ++) {
+            if (briques[i][j]) {
+               setPixel(3 - j, 4 - i, "red");
+            } else {
+               setPixel(3 - j, 4 - i, "white");
+            }
+         }
+      }
+      // on attends un clic de l'utilisateur
+      while ( ! clic) {
+         sleep(1);
+      }
+      // ici il y aura le lancer de la balle
+      clic = false;
+      println("x : "+coordonees_clic[0]+ "   y : "+ coordonees_clic[1]);
+      // si fin de tour retourne false c'est qu'on a perdu
+      if ( ! finDeTour()) {
+         continuer = false;
+      }
+   }
 }
 
-boolean finDeTour(){
-	//On abaisse toutes les briques d'une ligne, et on genere la ligne du dessus
-	//Si la ligne du bas n,'est pas vide avant dêtre abaissée, game over
-	boolean perdu = false;
-	for(int i = briques.length-1; i >= 0; i--){
-		for(int j = 0; j < briques[0].length; j++){
-			if(i == briques.length-1 && briques[i][j]){
-				return false;
-			}
-			if(i != 0){
-				//On copie les briques de la ligne au dessus si ce n'est pas la ligne tout au dessus
-				briques[i][j] = briques[i-1][j];
-			}
-			else {
-				//sinon , on genere une ligne.
-				briques[i][j] = briqueAuHasard();
-				
-			}
-		}
-	}
-	return true;
+boolean finDeTour() {
+   //On abaisse toutes les briques d'une ligne, et on genere la ligne du dessus
+    //Si la ligne du bas n,'est pas vide avant dêtre abaissée, game over
+    boolean perdu = false;
+   for (int i = briques.length -1; i >= 0; i --) {
+      for (int j = 0; j < briques[0].length; j ++) {
+         if (i == briques.length -1 && briques[i][j]) {
+            return  false;
+         }
+         if (i != 0) {
+            //On copie les briques de la ligne au dessus si ce n'est pas la ligne tout au dessus
+             briques[i][j] = briques[i -1][j];
+         } else {
+            //sinon , on genere une ligne.
+             briques[i][j] = briqueAuHasard();
+         }
+      }
+   }
+   return  true;
 }
 
-boolean briqueAuHasard(){
-	//Retourne true ou false (une chance sur 2?)
-	return random() > 0.5;
+boolean briqueAuHasard() {
+   //Retourne true ou false 
+    return  random() > 0.5;
 }
-;
+
