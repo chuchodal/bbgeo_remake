@@ -1,15 +1,16 @@
 
 int hauteur =8;
 int largeur=6;
+int tailleBrique = 10;
 
 // on declare un tableaux de booleens pour representer les briques
 boolean[][] briques = new boolean[hauteur][largeur];
 int[] coordonees_clic = new int[2];
 boolean clic = false;
-String couleur_briques[] = {"blue", "cyan", "black", "green", "magenta", "orange", "pink", "red", "white", "yellow"};
 
 void main() {
-   reset(largeur,hauteur, false);   
+	//on crée l'image telles qu'une brique fasse 10*10 pixels
+   reset(largeur*tailleBrique,hauteur*tailleBrique, false);   
 	// Définition d'un runnable qui detcet les clics
 	setRunnable(new Runnable() { public void run() {
 		coordonees_clic[0]= getX(); 
@@ -23,7 +24,7 @@ void main() {
          briques[i][j] = false;
       }
    }
-   // on apelle la fonction finDeTour pour initialiser les briques
+   // on appelle la fonction finDeTour pour initialiser les briques
    finDeTour();
    
    //Entrée dans la boucle principale
@@ -32,13 +33,13 @@ void main() {
       for (int i = 0; i < briques.length; i ++) {
          for (int j = 0; j < briques[0].length; j ++) {
             if (briques[i][j]) {
-               setPixel(j,i, couleur_random());
+               dessinerBrique(j,i, "red");
             } else {
-               setPixel(j,i, "white");
+               dessinerBrique(j,i, "white");
             }
          }
       }
-      // on attends un clic de l'utilisateur
+      // on attend un clic de l'utilisateur
       while ( ! clic) {
          sleep(1);
       }
@@ -63,7 +64,7 @@ boolean finDeTour() {
          }
          if (i != 0) {
             //On copie les briques de la ligne au dessus si ce n'est pas la ligne tout au dessus
-             briques[i][j] = briques[i -1][j]; 
+             briques[i][j] = briques[i -1][j];
          } else {
             //sinon , on genere une ligne.
              briques[i][j] = random() >0.5;
@@ -73,7 +74,10 @@ boolean finDeTour() {
    return  true;
 }
 
-String couleur_random(){
-   int nombre_random = (int)floor(random()*10);
-   return couleur_briques[nombre_random];
+void dessinerBrique(int x, int y, String color){
+	for (int i = 0; i < 10; i++){
+		for(int j = 0; j < 10; j++){
+			setPixel(tailleBrique*x+i, tailleBrique*y+j, color);
+		}
+	}
 }
