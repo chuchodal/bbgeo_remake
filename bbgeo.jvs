@@ -47,9 +47,9 @@ void main() {
       while ( ! clic) {
          sleep(1);
       }
+      echo("x : "+coordonees_clic[0]+ "   y : "+ coordonees_clic[1]);
       lancer_balle(coordonees_clic[0], coordonees_clic[1]);
       clic = false;
-      echo("x : "+coordonees_clic[0]+ "   y : "+ coordonees_clic[1]);
       // si fin de tour retourne false c'est qu'on a perdu
       if ( ! finDeTour()) {
          continuer = false;
@@ -87,11 +87,23 @@ void dessinerBrique(int x, int y, String color){
 }
 
 
-void lancer_balle(int x, int y){
+
+//Marche de temps en temps... et que lorque l'on clique dans la partie gauche pour le moment
+void lancer_balle(int xArrivee, int yArrivee){
 	//On calcule les coordonées du vecteur
-	int xVecteur = x - xLanceur;
-	int yVecteur = y - yLanceur;
-	echo("xVecteur=" + xVecteur + " yVecteur=" + yVecteur);
+	yArrivee = -yArrivee;
+	yLanceur = -yLanceur;
+	int a = (yArrivee-yLanceur)/(xArrivee-xLanceur);
+	int b = yLanceur-a*xLanceur;
+	//si la balle part à gauche du lanceur
+	if(xArrivee < xLanceur){
+		for (int x = xLanceur; x >= 0; x--){
+			int y = a*x+b;
+			echo("setting pixel x=" + x + " et y="+-y);
+			setPixel(x, -y, "black");
+			sleep(50);
+		}
+	}
 }
 
 String couleur_au_hasard(){
