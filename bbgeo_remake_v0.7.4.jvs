@@ -1,0 +1,159 @@
+
+import java.awt. *;
+import javax.swing. *;
+
+int hauteur =8;
+//Nombre de briques en hauteur
+int largeur =6;
+//Nombre de briques en largeur
+int tailleBrique = 20;
+//Taille en pixel du côté d'une brique
+int xLanceur = 60;
+//Position en pixel du lanceur
+int yLanceur = 160;
+
+// on declare un tableaux de booleens pour representer les briques
+String[][] briques = new String[hauteur][largeur];
+int[] coordonees_clic = new int[2];
+boolean clic = false;
+
+void main() {
+   //on crée l'image telles qu'une brique fasse 10*10 pixels
+    reset(largeur * tailleBrique, hauteur * tailleBrique, false);
+   // Définition d'un runnable qui detecte les clics
+    setRunnable(new Runnable() {
+      public void run() {
+         coordonees_clic[0] = getX(); coordonees_clic[1] = getY(); clic = true;}
+   }
+  );
+   //Création et remplissage initial du tableau contenant les briques
+    for (int i = 0; i < briques.length; i ++) {
+      for (int j = 0; j < briques[0].length; j ++) {
+         briques[i][j] = "vide";
+      }
+   }
+   // on appelle la fonction finDeTour pour initialiser les briques
+    finDeTour();
+   //Entrée dans la boucle principale
+    boolean continuer = true;
+   while (continuer) {
+      for (int i = 0; i < briques.length; i ++) {
+         for (int j = 0; j < briques[0].length; j ++) {
+            if (briques[i][j] != "vide") {
+               dessinerBrique(j, i, briques[i][j]);
+            } else {
+               dessinerBrique(j, i, "white");
+            }
+         }
+      }
+      // on attend un clic de l'utilisateur
+       while ( ! clic) {
+         sleep(1);
+      }
+      lancer_balle(coordonees_clic[0], coordonees_clic[1]);
+      clic = false;
+      // si fin de tour retourne false c'est qu'on a perdu
+       if ( ! finDeTour()) {
+         continuer = false;
+      }
+   }
+}
+
+boolean finDeTour() {
+   //On abaisse toutes les briques d'une ligne, et on genere la ligne du dessus
+    //Si la ligne du bas n,'est pas vide avant dêtre abaissée, game over
+    boolean perdu = false;
+   for (int i = briques.length -1; i >= 0; i --) {
+      for (int j = 0; j < briques[0].length; j ++) {
+         if (i == briques.length -1 && briques[i][j] != "vide") {
+            return  false;
+         }
+         if (i != 0) {
+            //On copie les briques de la ligne au dessus si ce n'est pas la ligne tout au dessus
+             briques[i][j] = briques[i -1][j];
+         } else {
+            //sinon , on genere une ligne.
+             briques[i][j] = brique_au_hasard();
+         }
+      }
+   }
+   return  true;
+}
+
+void dessinerBrique(int x, int y, String color) {
+   for (int i = 0; i < tailleBrique; i ++) {
+      for (int j = 0; j < tailleBrique; j ++) {
+         setPixel(tailleBrique * x + i, tailleBrique * y + j, color);
+      }
+   }
+}
+
+void dessinerBalle(int x, int y, String couleur, int duree) {
+   int[] couleurOrigine = getPixelColor(x, y);
+   //setPixel(x-1, y, "black");
+   //setPixel(x, y+1, "black");
+   //setPixel(x+1, y, "black");
+   //setPixel(x, y-1, "black");
+   setPixel(x, y, "black");
+    sleep(duree);
+   //setPixel(x-1, y, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+   //setPixel(x, y+1, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+   //setPixel(x+1, y, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+   //setPixel(x, y-1, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+   setPixel(x, y, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+    sleep(duree);
+       if(couleurOrigine[0] != 255 && couleurOrigine[1] != 255 && couleurOrigine[2] != 255){
+       	int a= (int)floor(x/tailleBrique);
+       	int b= (int)floor(y/tailleBrique);
+       	if(a<0 || a>hauteur || b<0 || b>largeur){
+       		println("erreur en x = "+x+" y = "+y);
+       	}
+       	else{
+       	     dessinerBrique(a,b, "white");
+         	     briques[a][b]="white";
+       	}
+         }
+}
+
+//Marche de temps en temps...
+void lancer_balle(int xArrivee, int yArrivee) {
+   //On calcule les coordonées du vecteur
+    float a = ((float) - yArrivee+(float)yLanceur) / ((float)xArrivee-(float)xLanceur);
+   float b = - yLanceur - a * xLanceur;
+   //si la balle part à gauche du lanceur
+    if (xArrivee < xLanceur) {
+      for (int x = xLanceur; x >= 0; x --) {
+         int y = Math.round(a * x + b);
+         if (y > 0) break;
+         dessinerBalle(x, - y, "black",10);
+         int[] couleurOrigine = getPixelColor(x, - y);
+         setPixel(x, - y, "black");
+         sleep(50);
+         setPixel(x, - y, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+      }
+   } else if (xArrivee == xLanceur) {
+      //jsp
+    } else {
+      for (int x = xLanceur; x <= largeur * tailleBrique; x ++) {
+         int y = Math.round(a * x + b);
+         if (y > 0) break;
+         dessinerBalle(x, - y, "black",10);
+         int[] couleurOrigine = getPixelColor(x, - y);
+         setPixel(x, - y, "black");
+         sleep(50);
+         setPixel(x, - y, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+      }
+   }
+}
+
+String brique_au_hasard() {
+   String couleur_briques[] = {
+      "blue", "cyan", "black", "green", "magenta", "orange", "pink", "red", "yellow", "gray"}
+  ;
+   if (random() > 0.5) {
+      return "vide";
+   } else {
+      int nombre_random = (int)floor(random() *10);
+      return  couleur_briques[nombre_random];
+   }
+}
