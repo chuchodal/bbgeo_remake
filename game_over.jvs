@@ -1,0 +1,69 @@
+
+int hauteur =8;
+//Nombre de briques en hauteur
+int largeur =6;
+//Nombre de briques en largeur
+int tailleBrique = 20;
+
+int a= 40;
+int b= 40;
+
+void main(){
+reset(largeur * tailleBrique, hauteur * tailleBrique, false);	
+game_over();	
+
+}
+
+void game_over(){
+g();	
+}
+void g(){
+ligne_horizontale(a, b ,5 );
+a-=3;
+b+=3;
+ligne_diagonale(a,b,3,"droite");
+ligne_diagonale(a,b,3,"gauche");
+a+=3;
+b+=3;
+ligne_horizontale(a,b,5);
+a+=5;
+b-=4;
+ligne_verticale(a,b,4);
+ligne_horizontale(a-2,b,2);
+}
+
+void a(){
+
+}
+
+void ligne_verticale(int x, int y, int taille){
+for(int i=0; i<taille; i++){
+	setPixel(x, y, "black");
+	y++;	
+}
+}
+
+void ligne_horizontale(int x, int y, int taille){
+for(int i=0; i<taille; i++){
+	setPixel(x, y, "black");
+	x++;	
+}	
+}
+
+void ligne_diagonale(int x, int y, int taille,String direction){
+if(direction=="droite"){
+         for(int i=0; i<taille; i++){
+	      setPixel(x, y, "black");
+	      x++;	
+	      y++;
+}
+	}
+else if(direction=="gauche"){
+        for(int i=0; i<taille; i++){
+	      setPixel(x, y, "black");
+	      	
+	      x++;
+	      y--;
+}
+	}
+}
