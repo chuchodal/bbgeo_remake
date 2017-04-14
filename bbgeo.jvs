@@ -47,7 +47,7 @@ void main() {
       while ( ! clic) {
          sleep(1);
       }
-      lancer_balle(coordonees_clic[0], coordonees_clic[1]);
+      lancer_balle(xLanceur, yLanceur, coordonees_clic[0], coordonees_clic[1]);
       clic = false;
       // si fin de tour retourne false c'est qu'on a perdu
       if ( ! finDeTour()) {
@@ -93,19 +93,23 @@ void dessinerBalle(int x, int y, String couleur, int duree){
 }
 
 
-void lancer_balle(int xArrivee, int yArrivee){
+void lancer_balle(int xDepart, int yDepart, int xArrivee, int yArrivee){
 	//On calcule les coordonées du vecteur
-	float a = ((float)-yArrivee+(float)yLanceur)/((float)xArrivee-(float)xLanceur);
-	float b = -yLanceur-a*xLanceur;
+	float a = ((float)-yArrivee+(float)yDepart)/((float)xArrivee-(float)xDepart);
+	float b = -yDepart-a*xDepart;
 	//si la balle part à gauche du lanceur
-	if(xArrivee < xLanceur){
-		for (int x = xLanceur; x >= 0; x--){
+	if(xArrivee < xDepart){
+		for (int x = xDepart; x >= 0; x--){
 			int y = Math.round(a*x+b);
 			//ne marche pas encore
 			if (obstacle_present(x, -y) != "aucun" && !(x == xLanceur && -y==yLanceur)){
 				//Si la balle rencontre une brique ou un rebord, on la fait rebondir
 				//lancer_balle(jesaispas, jesaispas);
-				println("Obstacle '" + obstacle_present(x, -y) + "'atteint en x=" + x + " et y =" +y);
+				int xTab = (int)floor(x/tailleBrique);
+				int yTab = (int)floor(y/tailleBrique);
+				dessinerBrique(xTab, yTab, "white");
+				briques[-yTab][xTab] = "white";
+				echo("Obstacle '" + obstacle_present(x, -y) + "'atteint en x=" + x + " et y =" +y);
 				break;
 			}
 			dessinerBalle(x, -y, "black", 5);
@@ -125,7 +129,11 @@ void lancer_balle(int xArrivee, int yArrivee){
 			if (obstacle_present(x, -y) != "aucun"  && !(x == xLanceur && -y==yLanceur)){
 				//Si la balle rencontre une brique ou un rebord, on la fait rebondir
 				//lancer_balle(jesaispas, jesaispas);
-				println("Obstacle '" + obstacle_present(x, -y) + "'atteint en x=" + x + " et y =" +y);
+				int xTab = (int)floor(x/tailleBrique);
+				int yTab = (int)floor(y/tailleBrique);
+				dessinerBrique(xTab, yTab, "white");
+				briques[-yTab][xTab] = "white";
+				echo("Obstacle '" + obstacle_present(x, -y) + "'atteint en x=" + x + " et y =" +y);
 				break;
 			}
 			dessinerBalle(x, -y, "black", 10);
@@ -148,6 +156,7 @@ String brique_au_hasard(){
 	}
 }
 
+//Fonctionne bien sauf pour les trajectoires trop verticales.
 String obstacle_present(int x, int y){
 	//on regarde si la balle a atteint une bordure
 	if (y <= 0) return "bordure_haute";
@@ -157,15 +166,16 @@ String obstacle_present(int x, int y){
 	else {
 		//La balle n'a atteint aucune bordure, on regarde maintenant si elle a atteint une brique
 		//On cherche quelle ligne et colonne du tableau de briques correspond aux coordonées
-		int xTab = x/tailleBrique;
-		int yTab = y/tailleBrique;
+		int xTab = (int)floor(x/tailleBrique);
+		int yTab = (int)floor(y/tailleBrique);
+		echo("on a atteint la brique (" + xTab +";"+yTab+").");
 		if (briques[yTab][xTab] == "vide") return "aucun";
 		else {
 			//La balle a atteint une brique, il faut maintenant savoir quel côté de la brique
 			int yHaut = yTab*tailleBrique,
-				yBas = yTab*tailleBrique+tailleBrique,
+				yBas = yTab*tailleBrique+tailleBrique-1,
 				xGauche=xTab*tailleBrique,
-				xDroite=xTab*tailleBrique+tailleBrique;
+				xDroite=xTab*tailleBrique+tailleBrique-1;
 			//Déjà on vérifie si c'est arrivé sur un coin
 			if(x==xGauche&&y==yHaut) return "brique_coin_haut_gauche";
 			else if (x==xDroite && y==yHaut) return "brique_coin_haut_droit";
@@ -180,7 +190,6 @@ String obstacle_present(int x, int y){
 				//Au cas où
 				else return "bizarre";
 			}
-			
 		}
 	}
 }
