@@ -21,11 +21,29 @@ void game_over() {
    a();
    m();
    e();
+   
    a =40;
-   b =50;;
+   b =50;
+   
    o();
    v();
    e();
+   r();
+   
+   a=10;
+   b=15;
+   
+   s();
+   c();
+   a+=5;
+   b-=10;
+   o();
+   a+=7;
+   b+=2;
+   r();
+   e();
+
+   points();
 }
 
 void g() {
@@ -58,22 +76,51 @@ void e() {
 }
 
 void o() {
-	ligne_verticale(a-2,b+7,4);
-	ligne_diagonale(a,b-4,2,"droite_haut");
-	ligne_horizontale(a,b,3);
+	ligne_verticale(a-2,b+6,3);
+	ligne_diagonale(a,b-3,2,"droite_haut");
+	ligne_horizontale(a,b,2);
 	ligne_diagonale(a,b,2,"droite_bas");
-	ligne_verticale(a,b,3);
+	ligne_verticale(a,b,2);
 	ligne_diagonale(a,b,2,"gauche_bas");
-	ligne_horizontale(a-3,b,4);
-	ligne_diagonale(a-4,b,2,"gauche_haut");
+	ligne_horizontale(a-1,b,2);
+	ligne_diagonale(a-3,b,2,"gauche_haut");
 }
 
 void v(){
-	ligne_diagonale(a+12,b-5,7,"droite_bas");
-	ligne_diagonale(a,b,8,"droite_haut");
-	b+=9;
+	ligne_diagonale(a+12,b-4,6,"droite_bas");
+	ligne_diagonale(a,b,7,"droite_haut");
+	b+=8;
 }
 
+void r(){
+	ligne_verticale(a+3,b-6,7);
+	ligne_horizontale(a,b-7,2);
+	ligne_diagonale(a,b,2,"droite_bas");
+	ligne_diagonale(a,b,2,"gauche_bas");
+	ligne_horizontale(a-1,b,2);
+	ligne_diagonale(a-2,b,3,"droite_bas");
+}
+
+void s(){
+	ligne_horizontale(a,b-7,3);
+	ligne_verticale(a-4,b+1,2);
+	ligne_horizontale(a+1,b,3);
+	ligne_verticale(a,b+1,2);
+	ligne_horizontale(a-3,b,3);
+}
+
+void c(){
+	ligne_horizontale(a+5,b-6,3);
+	ligne_diagonale(a-3,b,2,"gauche_bas");
+	ligne_verticale(a,b,2);
+	ligne_diagonale(a,b,2,"droite_bas");
+	ligne_horizontale(a,b,3);
+}
+
+void points(){
+	setPixel(a+3,b-5,"black");
+	setPixel(a+3,b,"black");
+}
 
 void ligne_verticale(int x, int y, int taille) {
    a = x;
