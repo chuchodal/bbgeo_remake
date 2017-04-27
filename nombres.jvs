@@ -1,0 +1,149 @@
+
+int a=40;
+int b=40;
+
+int hauteur =8; //Nombre de briques en hauteur
+int largeur=6; //Nombre de briques en largeur
+
+int tailleBrique = 20; //Taille en pixel du côté d'une brique
+
+
+void main(){
+	reset(largeur*tailleBrique,hauteur*tailleBrique, false);
+	zero();
+	
+}
+
+void white(){
+	for(int i=30;i<50;i++){
+		for(int j=30;j<50;j++){
+			setPixel(i,j,"white");
+			sleep(1);
+		}
+	}
+	a=40;
+	b=40;
+}
+
+void un(){
+	ligne_verticale(a,b,9);
+	ligne_diagonale(a,b-9,5,"gauche_bas");
+}
+
+void deux(){
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a,b+1,3);
+	ligne_diagonale(a,b,5,"gauche_bas");
+	ligne_horizontale(a+1,b,6);
+}
+
+void trois(){
+	ligne_horizontale(a,b,5);
+	ligne_horizontale(a-5,b+4,6);
+	ligne_horizontale(a-6,b+4,5);
+	ligne_verticale(a,b-7,7);
+}
+
+void quatre(){
+	ligne_diagonale(a,b,4,"gauche_bas");
+	ligne_horizontale(a,b,8);
+	ligne_verticale(a-4,b-1,5);
+}
+
+void cinq(){
+	ligne_horizontale(a,b,5);
+	ligne_verticale(a-5,b,4);
+	ligne_horizontale(a,b,3);
+	ligne_diagonale(a,b,2,"droite_bas");
+	ligne_verticale(a,b,2);
+	ligne_diagonale(a,b,2,"gauche_bas");
+	ligne_horizontale(a-3,b,4);
+}
+
+void six(){
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a-5,b,8);
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a,b-4,4);
+	ligne_horizontale(a-4,b-4,4);
+}
+
+void sept(){
+	ligne_horizontale(a,b,6);
+	ligne_diagonale(a,b,7,"gauche_bas");
+	ligne_horizontale(a+1,b-4,6);
+}
+
+void huit(){
+	ligne_horizontale(a,b,4);
+	ligne_horizontale(a-4,b+4,4);
+	ligne_horizontale(a-4,b+4,4);
+	ligne_verticale(a-5,b-7,7);
+	ligne_verticale(a+5,b-7,7);
+}
+
+void neuf(){
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a-4,b-4,4);
+	ligne_horizontale(a,b-4,4);
+	ligne_verticale(a,b,8);
+	ligne_horizontale(a-4,b,4);
+}
+
+void zero(){
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a,b+1,8);
+	ligne_horizontale(a-4,b,4);
+	ligne_verticale(a-5,b-8,8);
+}
+
+void ligne_verticale(int x, int y, int taille) {
+   a = x;
+   b = y;
+   for (int i =0; i < taille; i ++) {
+      setPixel(a, b, "black");
+      b ++;
+   }
+}
+
+void ligne_horizontale(int x, int y, int taille) {
+   a = x;
+   b = y;
+   for (int i =0; i < taille; i ++) {
+      setPixel(a, b, "black");
+      a ++;
+   }
+}
+
+void ligne_diagonale(int x, int y, int taille, String direction) {
+   a = x;
+   b = y;
+   if (direction == "droite_bas") {
+      for (int i =0; i < taille; i ++) {
+         setPixel(a, b, "black");
+         a ++;
+         b ++;
+      }
+   } 
+   else if (direction == "droite_haut") {
+      for (int i =0; i < taille; i ++) {
+         setPixel(a, b, "black");
+         a ++;
+         b --;
+      }
+   } 
+   else if (direction == "gauche_bas") {
+      for (int i =0; i < taille; i ++) {
+         setPixel(a, b, "black");
+         a --;
+         b ++;
+      }
+   } 
+   else if (direction == "gauche_haut") {
+      for (int i =0; i < taille; i ++) {
+         setPixel(a, b, "black");
+         a --;
+         b --;
+      }
+   }
+}
