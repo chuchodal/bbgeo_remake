@@ -1,0 +1,510 @@
+
+int hauteur =8; //Nombre de briques en hauteur
+int largeur=6; //Nombre de briques en largeur
+
+int tailleBrique = 20; //Taille en pixel du côté d'une brique
+
+int xLanceur = 60; //Position en pixel du lanceur
+int yLanceur = 160;
+
+int a = 40;
+int b = 40;
+
+int score=0;
+int score_10=0;
+
+// on declare un tableaux de booleens pour representer les briques
+String[][] briques = new String[hauteur][largeur];
+int[] coordonees_clic = new int[2];
+boolean clic = false;
+
+void main() {
+	//on crée l'image telles qu'une brique fasse 10*10 pixels
+   reset(largeur*tailleBrique,hauteur*tailleBrique, false);   
+	// Définition d'un runnable qui detcet les clics
+	setRunnable(new Runnable() { public void run() {
+		coordonees_clic[0]= getX(); 
+         coordonees_clic[1] = getY();
+	    clic = true;
+	}});
+
+   //Création et remplissage initial du tableau contenant les briques
+    for (int i = 0; i < briques.length; i ++) {
+      for (int j = 0; j < briques[0].length; j ++) {
+         briques[i][j] = "vide";
+      }
+   }
+   // on appelle la fonction finDeTour pour initialiser les briques
+   finDeTour();
+   
+   //Entrée dans la boucle principale
+    boolean continuer = true;
+   while (continuer) {
+      for (int i = 0; i < briques.length; i ++) {
+         for (int j = 0; j < briques[0].length; j ++) {
+            if (briques[i][j] != "vide") {
+               dessinerBrique(j,i, briques[i][j]);
+            } else {
+               dessinerBrique(j,i, "white");
+            }
+         }
+      }
+      // on attend un clic de l'utilisateur
+      while ( ! clic) {
+         sleep(1);
+      }
+      lancer_balle(xLanceur, yLanceur, coordonees_clic[0], coordonees_clic[1]);
+      clic = false;
+      // si fin de tour retourne false c'est qu'on a perdu
+      if ( ! finDeTour()) {
+      	white();
+      	game_over();
+      	score();
+         continuer = false;
+      }
+   }
+}
+
+boolean finDeTour() {
+   //On abaisse toutes les briques d'une ligne, et on genere la ligne du dessus
+    //Si la ligne du bas n,'est pas vide avant dêtre abaissée, game over
+    boolean perdu = false;
+   for (int i = briques.length -1; i >= 0; i --) {
+      for (int j = 0; j < briques[0].length; j ++) {
+         if (i == briques.length -1 && briques[i][j] != "vide") {
+            return  false;
+         }
+         if (i != 0) {
+            //On copie les briques de la ligne au dessus si ce n'est pas la ligne tout au dessus
+             briques[i][j] = briques[i -1][j];
+         } else {
+            //sinon , on genere une ligne.
+             briques[i][j] = brique_au_hasard();
+         }
+      }
+   }
+   return  true;
+}
+
+void dessinerBrique(int x, int y, String color){
+	for (int i = 0; i < tailleBrique; i++){
+		for(int j = 0; j < tailleBrique; j++){
+			setPixel(tailleBrique*x+i, tailleBrique*y+j, color);
+		}
+	}
+}
+
+void dessinerBalle(int x, int y, String couleur, int duree){
+	int[] couleurOrigine = getPixelColor(x, y);
+	setPixel(x, y, "black");
+	sleep(duree);
+	setPixel(x, y, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+}
+
+
+void lancer_balle(int xDepart, int yDepart, int xArrivee, int yArrivee){
+	//On calcule les coordonées du vecteur
+	float a = ((float)-yArrivee+(float)yDepart)/((float)xArrivee-(float)xDepart);
+	float b = -yDepart-a*xDepart;
+	//si la balle part à gauche du lanceur
+	if(xArrivee < xDepart){
+		for (int x = xDepart; x >= 0; x--){
+			int y = Math.round(a*x+b);
+			//ne marche pas encore
+			if (obstacle_present(x, -y) != "aucun" && !(x == xLanceur && -y==yLanceur)){
+				//Si la balle rencontre une brique ou un rebord, on la fait rebondir
+				//lancer_balle(jesaispas, jesaispas);
+				int xTab = (int)floor(x/tailleBrique);
+				int yTab = (int)floor(y/tailleBrique);
+				effacer_brique(xTab, -yTab);
+				echo("Obstacle '" + obstacle_present(x, -y) + "'atteint en x=" + x + " et y =" +y);
+				break;
+			}
+			dessinerBalle(x, -y, "black", 5);
+			int[] couleurOrigine = getPixelColor(x, -y);
+			setPixel(x, -y, "black");
+			sleep(50);
+			setPixel(x, -y, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+		}
+	}
+	else if (xArrivee == xLanceur){
+		//jsp
+	}
+	else {
+		for (int x = xLanceur; x <= largeur*tailleBrique; x++){
+			int y = Math.round(a*x+b);
+			//ne marche pas encore
+			if (obstacle_present(x, -y) != "aucun"  && !(x == xLanceur && -y==yLanceur)){
+				//Si la balle rencontre une brique ou un rebord, on la fait rebondir
+				//lancer_balle(jesaispas, jesaispas);
+				int xTab = (int)floor(x/tailleBrique);
+				int yTab = (int)floor(y/tailleBrique);
+				effacer_brique(xTab, -yTab);
+				echo("Obstacle '" + obstacle_present(x, -y) + "'atteint en x=" + x + " et y =" +y);
+				break;
+			}
+			dessinerBalle(x, -y, "black", 10);
+			int[] couleurOrigine = getPixelColor(x, -y);
+			setPixel(x, -y, "black");
+			sleep(50);
+			setPixel(x, -y, couleurOrigine[0], couleurOrigine[1], couleurOrigine[2]);
+		}
+	}
+}
+
+String brique_au_hasard(){
+	String couleur_briques[] = {"blue", "cyan", "black", "green", "magenta", "orange", "pink", "red", "yellow", "gray"};
+	if (random() > 0.5){
+		return "vide";
+	}
+	else {
+   		int nombre_random = (int)floor(random()*10);
+   		return couleur_briques[nombre_random];
+	}
+}
+
+//Fonctionne bien sauf pour les trajectoires trop verticales.
+String obstacle_present(int x, int y){
+	//on regarde si la balle a atteint une bordure
+	if (y <= 0) return "bordure_haute";
+	else if (y >= hauteur*tailleBrique) return "bordure_basse";
+	else if (x <= 0) return "bordure_gauche";
+	else if (x >= largeur*tailleBrique) return "bordure_droite";
+	else {
+		//La balle n'a atteint aucune bordure, on regarde maintenant si elle a atteint une brique
+		//On cherche quelle ligne et colonne du tableau de briques correspond aux coordonées
+		int xTab = (int)floor(x/tailleBrique);
+		int yTab = (int)floor(y/tailleBrique);
+		echo("on a atteint la brique (" + xTab +";"+yTab+").");
+		if (briques[yTab][xTab] == "vide") return "aucun";
+		else {
+			//La balle a atteint une brique, il faut maintenant savoir quel côté de la brique
+			int yHaut = yTab*tailleBrique,
+				yBas = yTab*tailleBrique+tailleBrique-1,
+				xGauche=xTab*tailleBrique,
+				xDroite=xTab*tailleBrique+tailleBrique-1;
+			//Déjà on vérifie si c'est arrivé sur un coin
+			if(x==xGauche&&y==yHaut) return "brique_coin_haut_gauche";
+			else if (x==xDroite && y==yHaut) return "brique_coin_haut_droit";
+			else if (x==xGauche && y==yBas) return "brique_coin_bas_gauche";
+			else if (x==xDroite && y==yBas) return "brique_coin_bas_droit";
+			//Sinon, on cherche le côté
+			else {
+				if (y==yHaut) return "brique_haut";
+				else if (y==yBas) return "brique_bas";
+				else if (x==xGauche) return "brique_gauche";
+				else if (x==xDroite) return "brique_droit";
+				//Au cas où
+				else return "bizarre";
+			}
+		}
+	}
+}
+
+void effacer_brique(int x_brique ,int y_brique){
+	int c=x_brique*20+10;
+	int d=y_brique*20+10;
+	String couleurOrigine = briques[y_brique][x_brique];	
+       	     dessinerBrique(x_brique ,y_brique, "white");
+       	     briques[y_brique][x_brique]= "vide";
+         	     for(int i=0; i<4; i++){
+         	     	setPixel(c-i,d,couleurOrigine);
+         	     	setPixel(c+i,d,couleurOrigine);
+         	     	setPixel(c,d-i,couleurOrigine);
+         	     	setPixel(c,d+i,couleurOrigine);
+         	     	sleep(50);
+         	     	setPixel(c-i,d,"white");
+         	     	setPixel(c+i,d,"white");
+         	     	setPixel(c,d-i,"white");
+         	     	setPixel(c,d+i,"white");
+       	}
+       	score++;
+       	if(score==10){
+       		score=0;
+       		score_10++;
+       	}
+}
+
+
+void game_over() {
+   a=40;
+   b=40;
+   g();
+   a();
+   m();
+   e();
+   a =40;
+   b =50;
+   o();
+   v();
+   e();
+   r();
+}
+
+void score(){
+   a=40;
+   b=80;
+   s();
+   c();
+   a+=5;
+   b-=10;
+   o();
+   a+=7;
+   b+=2;
+   r();
+   e();
+
+   points();
+   a=50;
+   b=85;
+   chiffres(score_10);
+   a=60;
+   b=85;
+   chiffres(score); 
+}
+
+void chiffres (int nombre){
+	switch(nombre){
+		case 0:
+		zero();
+		break;
+		case 1:
+		un();
+		break;
+		case 2:
+		deux();
+		break;
+		case 3:
+		trois();
+		break;
+		case 4:
+		quatre();
+		break;
+		case 5:
+		cinq();
+		break;
+		case 6:
+		six();
+		break;
+		case 7:
+		sept();
+		break;
+		case 8:
+		huit();
+		break;
+		case 9:
+		neuf();
+		break;
+		default:
+		println("erreur");
+		break;
+	}
+}
+
+void white(){
+	for(int i=30;i<100;i++){
+		for(int j=30;j<100;j++){
+			setPixel(i,j,"white");
+			sleep(1);
+		}
+	}
+}
+
+void g() {
+   ligne_horizontale(a, b, 5);
+   ligne_diagonale(a -5, b, 3, "gauche_bas");
+   ligne_diagonale(a, b, 3, "droite_bas");
+   ligne_horizontale(a, b, 5);
+   ligne_verticale(a, b -3, 4);
+   ligne_horizontale(a, b -4, 2);
+}
+
+void a() {
+   ligne_diagonale(a +2, b +3, 7, "droite_haut");
+   ligne_horizontale(a -3, b +4, 5);
+   ligne_diagonale(a -3, b -3, 7, "droite_bas");
+}
+
+void m() {
+   ligne_verticale(a +2, b -7, 7);
+   ligne_diagonale(a, b -7, 5, "droite_bas");
+   ligne_diagonale(a, b, 5, "droite_haut");
+   ligne_verticale(a, b, 7);
+}
+
+void e() {
+   ligne_verticale(a +3, b -7, 7);
+   ligne_horizontale(a, b -7, 5);
+   ligne_horizontale(a -5, b +3, 3);
+   ligne_horizontale(a -3, b +3, 5);
+}
+
+void o() {
+	ligne_verticale(a-2,b+6,3);
+	ligne_diagonale(a,b-3,2,"droite_haut");
+	ligne_horizontale(a,b,2);
+	ligne_diagonale(a,b,2,"droite_bas");
+	ligne_verticale(a,b,2);
+	ligne_diagonale(a,b,2,"gauche_bas");
+	ligne_horizontale(a-1,b,2);
+	ligne_diagonale(a-3,b,2,"gauche_haut");
+}
+
+void v(){
+	ligne_diagonale(a+12,b-4,6,"droite_bas");
+	ligne_diagonale(a,b,7,"droite_haut");
+	b+=8;
+}
+
+void r(){
+	ligne_verticale(a+3,b-6,7);
+	ligne_horizontale(a,b-7,2);
+	ligne_diagonale(a,b,2,"droite_bas");
+	ligne_diagonale(a,b,2,"gauche_bas");
+	ligne_horizontale(a-1,b,2);
+	ligne_diagonale(a-2,b,3,"droite_bas");
+}
+
+void s(){
+	ligne_horizontale(a,b-7,3);
+	ligne_verticale(a-4,b+1,2);
+	ligne_horizontale(a+1,b,3);
+	ligne_verticale(a,b+1,2);
+	ligne_horizontale(a-3,b,3);
+}
+
+void c(){
+	ligne_horizontale(a+5,b-6,3);
+	ligne_diagonale(a-3,b,2,"gauche_bas");
+	ligne_verticale(a,b,2);
+	ligne_diagonale(a,b,2,"droite_bas");
+	ligne_horizontale(a,b,3);
+}
+
+void points(){
+	setPixel(a+3,b-5,"black");
+	setPixel(a+3,b,"black");
+}
+
+void un(){
+	ligne_verticale(a,b,9);
+	ligne_diagonale(a,b-9,5,"gauche_bas");
+}
+
+void deux(){
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a,b+1,3);
+	ligne_diagonale(a,b,5,"gauche_bas");
+	ligne_horizontale(a+1,b,6);
+}
+
+void trois(){
+	ligne_horizontale(a,b,5);
+	ligne_horizontale(a-5,b+4,6);
+	ligne_horizontale(a-6,b+4,5);
+	ligne_verticale(a,b-7,7);
+}
+
+void quatre(){
+	ligne_diagonale(a,b,4,"gauche_bas");
+	ligne_horizontale(a,b,8);
+	ligne_verticale(a-4,b-1,5);
+}
+
+void cinq(){
+	ligne_horizontale(a,b,5);
+	ligne_verticale(a-5,b,4);
+	ligne_horizontale(a,b,3);
+	ligne_diagonale(a,b,2,"droite_bas");
+	ligne_verticale(a,b,2);
+	ligne_diagonale(a,b,2,"gauche_bas");
+	ligne_horizontale(a-3,b,4);
+}
+
+void six(){
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a-5,b,8);
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a,b-4,4);
+	ligne_horizontale(a-4,b-4,4);
+}
+
+void sept(){
+	ligne_horizontale(a,b,6);
+	ligne_diagonale(a,b,7,"gauche_bas");
+	ligne_horizontale(a+1,b-4,6);
+}
+
+void huit(){
+	ligne_horizontale(a,b,4);
+	ligne_horizontale(a-4,b+4,4);
+	ligne_horizontale(a-4,b+4,4);
+	ligne_verticale(a-5,b-7,7);
+	ligne_verticale(a+5,b-7,7);
+}
+
+void neuf(){
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a-4,b-4,4);
+	ligne_horizontale(a,b-4,4);
+	ligne_verticale(a,b,8);
+	ligne_horizontale(a-4,b,4);
+}
+
+void zero(){
+	ligne_horizontale(a,b,4);
+	ligne_verticale(a,b+1,8);
+	ligne_horizontale(a-4,b,4);
+	ligne_verticale(a-5,b-8,8);
+}
+
+void ligne_verticale(int x, int y, int taille) {
+   a = x;
+   b = y;
+   for (int i =0; i < taille; i ++) {
+      setPixel(a, b, "black");
+      b ++;
+   }
+}
+
+void ligne_horizontale(int x, int y, int taille) {
+   a = x;
+   b = y;
+   for (int i =0; i < taille; i ++) {
+      setPixel(a, b, "black");
+      a ++;
+   }
+}
+
+void ligne_diagonale(int x, int y, int taille, String direction) {
+   a = x;
+   b = y;
+   if (direction == "droite_bas") {
+      for (int i =0; i < taille; i ++) {
+         setPixel(a, b, "black");
+         a ++;
+         b ++;
+      }
+   } 
+   else if (direction == "droite_haut") {
+      for (int i =0; i < taille; i ++) {
+         setPixel(a, b, "black");
+         a ++;
+         b --;
+      }
+   } 
+   else if (direction == "gauche_bas") {
+      for (int i =0; i < taille; i ++) {
+         setPixel(a, b, "black");
+         a --;
+         b ++;
+      }
+   } 
+   else if (direction == "gauche_haut") {
+      for (int i =0; i < taille; i ++) {
+         setPixel(a, b, "black");
+         a --;
+         b --;
+      }
+   }
+}
