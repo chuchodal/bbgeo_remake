@@ -1,16 +1,15 @@
 
+//Nombre de briques en hauteur
 int hauteur =8;
 
-//Nombre de briques en hauteur
+//Nombre de briques en largeur
 int largeur =6;
 
-//Nombre de briques en largeur
- int tailleBrique = 20;
-
 //Taille en pixel du côté d'une brique
- int xLanceur = 60;
-
+int tailleBrique = 20;
+ 
 //Position en pixel du lanceur
+int xLanceur = 60;
 int yLanceur = 160;
 
 //variables pour l'effacement des briques
@@ -393,8 +392,8 @@ void c() {
 }
 
 void points() {
-   setPixel(a +3, b -5, "black");
-   setPixel(a +3, b, "black");
+   setPixel(a +3, b -5, "white");
+   setPixel(a +3, b, "white");
 }
 
 void un() {
