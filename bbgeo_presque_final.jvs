@@ -146,7 +146,7 @@ void lancer_balle(int xDepart, int yDepart, Integer xArrivee, Integer yArrivee, 
 		//Si l'on rencontre un obstacle (brique ou bordure du jeu)
 		if (obstacle != "aucun" && ! (x == xDepart && y == yDepart)) {
 			//Si l'obstacle est une brique, on l'efface
-			if (obstacle.indexOf("brique") !=-1 || obstacle == "bizarre") {
+			if (obstacle.indexOf("brique") !=-1) {
 				int xTab = (int)floor(x / tailleBrique);
 				int yTab = (int)floor(y / tailleBrique);
 				effacer_brique(xTab, -yTab);
@@ -203,7 +203,7 @@ String obstacle_present(int x, int y) {
 			if (x == xGauche && y == yHaut) return "brique_coin";
 			else if (x == xDroite && y == yHaut) return "brique_coin";
 			else if (x == xGauche && y == yBas) return "brique_coin";
-			else if (x == xDroite && y == yBas) return "coin";
+			else if (x == xDroite && y == yBas) return "brique_coin";
 			//Sinon, on cherche le côté
 			else {
 				if (y == yHaut) return "brique_haut";
@@ -211,7 +211,7 @@ String obstacle_present(int x, int y) {
 				else if (x == xGauche) return "brique_gauche";
 				else if (x == xDroite) return "brique_droit";
 				//Au cas où
-				else return "bizarre";
+				else return "brique";
          }
       }
    }
