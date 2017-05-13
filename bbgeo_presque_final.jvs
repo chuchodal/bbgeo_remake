@@ -66,7 +66,7 @@ void main() {
 			sleep(1);
 		}
 		//Puis on lance la balle vers le point cliqué par le joueur
-		lancer_balle(xLanceur, yLanceur, coordonees_clic[0], -coordonees_clic[1], null, null);
+		lancer_balle(xLanceur, yLanceur+1, coordonees_clic[0], -coordonees_clic[1], null, null);
 		
 		//On attends que toutes les explosions soient finies avant de continuer
 		while(explosions_en_cours > 0){
@@ -162,7 +162,8 @@ void lancer_balle(int xDepart, int yDepart, Integer xArrivee, Integer yArrivee, 
 			break;
          }
          //plus |a| est grand, plus on attends longtemps afin de garder une vitesse constante pour toutes les trajectoires
-         dessinerBalle(x, - y, "black", abs(Math.round(a*10)));
+         //Les fonctions min et max servent à garder une valeur comprise entre 10 et 100.
+         dessinerBalle(x, - y, "black", max(5,min(abs(Math.round(a*10)), 100)));
 	}
 }
 
