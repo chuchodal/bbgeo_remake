@@ -1,4 +1,9 @@
 
+/* Ce programme est un jeu de casse brique. 
+ * Il s'utilise avec la proglet codagePixel.
+ * Cliquez pour lancer la balle.
+ */
+
 //Nombre de briques de la grille de jeu
 int hauteur =8;
 int largeur =6;
